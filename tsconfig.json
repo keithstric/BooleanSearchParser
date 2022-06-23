@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "declaration": true,
+    "stripInternal": true,
+    "baseUrl": "./",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "strict": true,
+    "newLine": "lf",
+    "lib": [
+      "DOM",
+      "ES6"
+    ]
+  },
+  "files": ["src/index.ts"],
+  "exclude": ["node_modules", "src/*.spec.ts"]
+}

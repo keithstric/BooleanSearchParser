@@ -1,0 +1,38 @@
+{
+  "name": "boolean-search-parser",
+  "version": "1.0.0",
+  "description": "Boolean Search string parser",
+  "main": "./dist/index.js",
+  "scripts": {
+    "ts:cjs": "tsc -p tsconfig.cjs.json",
+    "ts:es": "tsc -p tsconfig.es.json",
+    "ts:typedefs": "tsc --outDir . --emitDeclarationOnly",
+    "ts:all": "npm run ts:cjs && npm run ts:es && npm run ts:typedefs",
+    "ts:clean": "rimraf ./*.d.ts",
+    "build": "npm run clean && npm run ts:all",
+    "build:es": "npm run clean && npm run ts:es",
+    "clean": "rimraf dist && npm run ts:clean",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts"
+  },
+  "typings": "index.d.ts",
+  "keywords": [],
+  "author": "keithstric@gmail.com",
+  "license": "ISC",
+  "files": [
+    "dist/**/*"
+  ],
+  "devDependencies": {
+    "@types/chai": "^4.2.6",
+    "@types/chai-spies": "^1.0.1",
+    "@types/jsdom": "^12.2.4",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "jsdom": "^15.2.1",
+    "mocha": "^6.2.2",
+    "rimraf": "^3.0.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {}
+}

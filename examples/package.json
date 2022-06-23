@@ -1,0 +1,16 @@
+{
+  "name": "dev-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "boolean-search-dev.js",
+  "scripts": {
+    "build": "browserify app.js -o bundle.js",
+    "watch": "watchify app.js -o bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "watchify": "^4.0.0"
+  }
+}

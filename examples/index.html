@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Boolean Search Test</title>
+	<style>
+		input {
+			width: 50%;
+		}
+		.output {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.25rem;
+			height: 150px;
+		}
+		.output span {
+			margin-left: 3px;
+			margin-right: 3px;
+		}
+		.warning {
+			background-color: orange;
+			color: black;
+		}
+		.operator {
+			background-color: green;
+			color: white;
+		}
+	</style>
+</head>
+<body>
+	<div style="display: flex; flex-direction: column;">
+		<h3>Boolean Search Test</h3>
+		<div style="display: flex; flex-direction: row;">
+			<input type="text" />
+			<button id="submit">Submit Search</button>
+		</div>
+		<div id="output-container" class="output"></div>
+	</div>
+	<script src="./bundle.js"></script>
+</body>
+</html>
