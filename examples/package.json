@@ -5,7 +5,7 @@
   "main": "boolean-search-dev.js",
   "scripts": {
     "build": "browserify app.js -o bundle.js",
-    "watch": "watchify app.js -o bundle.js"
+    "watch": "watchify app.js -v -o bundle.js"
   },
   "author": "",
   "license": "ISC",

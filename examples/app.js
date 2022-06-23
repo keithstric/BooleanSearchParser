@@ -6,6 +6,7 @@ const button = document.querySelector('#submit');
 button.addEventListener('click', onSubmit);
 
 function onSubmit() {
+	console.log('onSubmit')
 	const searchStr = searchField.value;
 	const bs = new BSP.BooleanSearch(searchStr);
 	output.innerHTML = bs.html;

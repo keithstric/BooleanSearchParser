@@ -1,19 +1,4 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const BSP = require('boolean-search-parser');
-
-const searchField = document.querySelector('input');
-const output = document.querySelector('#output-container');
-const button = document.querySelector('#submit');
-button.addEventListener('click', onSubmit);
-
-function onSubmit() {
-	const searchStr = searchField.value;
-	const bs = new BSP.BooleanSearch(searchStr);
-	output.innerHTML = bs.html;
-	console.log('bs=', bs);
-}
-
-},{"boolean-search-parser":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BooleanSearch = void 0;
@@ -367,7 +352,7 @@ class BooleanSearch {
 }
 exports.BooleanSearch = BooleanSearch;
 
-},{"./Parser":3,"./Rule":4,"./Token":5}],3:[function(require,module,exports){
+},{"./Parser":2,"./Rule":3,"./Token":4}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parser = void 0;
@@ -952,7 +937,7 @@ class Parser {
                     let match = rule.test(token.value);
                     if (match !== -1) {
                         if (!token.isInsideQuotes) {
-                            const msg = `Invalid character at position ${token.position.start} "${rule.character}": `;
+                            const msg = `Invalid character at position ${token.position.start} &#39;${rule.character}&#39;: `;
                             token.errors.push(new Error(msg));
                         }
                     }
@@ -962,7 +947,7 @@ class Parser {
                     const prevToken = this.getPrecedingOperatorToken(tokens, idx);
                     if (prevToken && (!prevToken.token || (prevToken && prevToken.distance > 2))) {
                         const value = prevToken.token ? prevToken.token.value : token.value;
-                        const msg = `An operator should precede a grouping at position ${token.position.start} "${value}": `;
+                        const msg = `An operator should precede a grouping at position ${token.position.start} &#39;${value}&#39;: `;
                         token.errors.push(new Error(msg));
                     }
                 }
@@ -972,7 +957,7 @@ class Parser {
                     const nextToken2 = arr[idx + 2];
                     if ((nextToken && nextToken.type === Token_1.TokenType.OPERATOR) ||
                         (nextToken2 && nextToken2.type === Token_1.TokenType.OPERATOR)) {
-                        const msg = `Cannot have operators back to back at position ${token.position.start} "${token.value} ${nextToken.value}": `;
+                        const msg = `Cannot have operators back to back at position ${token.position.start} &#39;${token.value} ${nextToken.value}&#39;: `;
                         token.errors.push(new Error(msg));
                     }
                 }
@@ -987,7 +972,7 @@ class Parser {
                     const unclosedId = unclosedGroupToken.id;
                     const filteredTokens = tokens.filter(srcToken => srcToken.id === unclosedId);
                     if (filteredTokens && filteredTokens.length) {
-                        const msg = `Unmatched ${tokenType.msgNamePart} at position ${filteredTokens[0].position.start} "${filteredTokens[0].value}": `;
+                        const msg = `Unmatched ${tokenType.msgNamePart} at position ${filteredTokens[0].position.start} &#39;${filteredTokens[0].value}&#39;: `;
                         filteredTokens[0].errors.push(new Error(msg));
                     }
                 }
@@ -997,7 +982,7 @@ class Parser {
             const secondToken = tokens.length >= 2 ? tokens[1].type : null;
             if ((firstToken === OPERATOR || firstToken === POSSIBLE) ||
                 (firstToken === WHITE_SPACE && (secondToken && secondToken === OPERATOR || secondToken === POSSIBLE))) {
-                const msg = `A search must not begin with an operator at position 0 "${tokens[0].value}": `;
+                const msg = `A search must not begin with an operator at position 0 &#39;${tokens[0].value}&#39;: `;
                 tokens[0].errors.push(new Error(msg));
             }
             const lastIdx = tokens.length - 1;
@@ -1006,7 +991,7 @@ class Parser {
             if ((lastToken === OPERATOR || lastToken === POSSIBLE) ||
                 (lastToken === WHITE_SPACE &&
                     (nextLastToken && nextLastToken === POSSIBLE || nextLastToken === OPERATOR))) {
-                const msg = `A search must not end with an operator at position ${tokens[lastIdx].position.start} "${tokens[lastIdx].value}": `;
+                const msg = `A search must not end with an operator at position ${tokens[lastIdx].position.start} &#39;${tokens[lastIdx].value}&#39;: `;
                 tokens[lastIdx].errors.push(new Error(msg));
             }
         }
@@ -1016,7 +1001,7 @@ class Parser {
 }
 exports.Parser = Parser;
 
-},{"./Token":5}],4:[function(require,module,exports){
+},{"./Token":4}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidationRule = exports.EscapeableRule = exports.Rule = void 0;
@@ -1121,7 +1106,7 @@ class ValidationRule extends Rule {
 }
 exports.ValidationRule = ValidationRule;
 
-},{"./Token":5}],5:[function(require,module,exports){
+},{"./Token":4}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Token = exports.TokenOperations = exports.TokenOperators = exports.TokenType = void 0;
@@ -1282,14 +1267,16 @@ class Token {
         const { errors, rule, _html, type, value } = this;
         if (errors && errors.length) {
             styleClass = 'error';
-            span = `<span class="${styleClass}">${value}</span>`;
+            const errorStr = errors.map((err, idx) => err.message).join('&#10;');
+            span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;
             this._html = value.replace(value, span);
         }
         else if (!_html && rule && value) {
             styleClass = type === TokenType.POSSIBLE ? 'warning' : type === TokenType.OPERATOR ? 'operator' : '';
+            const titleStr = type === TokenType.POSSIBLE ? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).` : '';
             span = type !== TokenType.POSSIBLE && type !== TokenType.OPERATOR
                 ? value
-                : `<span class="${styleClass}">${value}</span>`;
+                : `<span class="${styleClass}" title="${titleStr}">${value}</span>`;
             this._html = rule.pattern ? value.replace(rule.pattern, span) : this.value;
         }
         else if (!_html && value) {
@@ -1386,7 +1373,7 @@ class Token {
 }
 exports.Token = Token;
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1404,4 +1391,20 @@ __exportStar(require("./Parser"), exports);
 __exportStar(require("./Rule"), exports);
 __exportStar(require("./Token"), exports);
 
-},{"./BooleanSearch":2,"./Parser":3,"./Rule":4,"./Token":5}]},{},[1]);
+},{"./BooleanSearch":1,"./Parser":2,"./Rule":3,"./Token":4}],6:[function(require,module,exports){
+const BSP = require('boolean-search-parser');
+
+const searchField = document.querySelector('input');
+const output = document.querySelector('#output-container');
+const button = document.querySelector('#submit');
+button.addEventListener('click', onSubmit);
+
+function onSubmit() {
+	console.log('onSubmit')
+	const searchStr = searchField.value;
+	const bs = new BSP.BooleanSearch(searchStr);
+	output.innerHTML = bs.html;
+	console.log('bs=', bs);
+}
+
+},{"boolean-search-parser":5}]},{},[6]);

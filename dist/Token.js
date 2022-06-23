@@ -158,14 +158,16 @@ class Token {
         const { errors, rule, _html, type, value } = this;
         if (errors && errors.length) {
             styleClass = 'error';
-            span = `<span class="${styleClass}">${value}</span>`;
+            const errorStr = errors.map((err, idx) => err.message).join('&#10;');
+            span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;
             this._html = value.replace(value, span);
         }
         else if (!_html && rule && value) {
             styleClass = type === TokenType.POSSIBLE ? 'warning' : type === TokenType.OPERATOR ? 'operator' : '';
+            const titleStr = type === TokenType.POSSIBLE ? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).` : '';
             span = type !== TokenType.POSSIBLE && type !== TokenType.OPERATOR
                 ? value
-                : `<span class="${styleClass}">${value}</span>`;
+                : `<span class="${styleClass}" title="${titleStr}">${value}</span>`;
             this._html = rule.pattern ? value.replace(rule.pattern, span) : this.value;
         }
         else if (!_html && value) {

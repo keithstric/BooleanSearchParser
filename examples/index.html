@@ -18,12 +18,23 @@
 			margin-left: 3px;
 			margin-right: 3px;
 		}
+		.warning, .operator, .error {
+			border: 1px solid;
+			border-radius: 4px;
+		}
 		.warning {
+			border-color: orange;
 			background-color: orange;
 			color: black;
 		}
 		.operator {
+			border-color: green;
 			background-color: green;
+			color: white;
+		}
+		.error {
+			border-color: red;
+			background-color: red;
 			color: white;
 		}
 	</style>
@@ -32,7 +43,7 @@
 	<div style="display: flex; flex-direction: column;">
 		<h3>Boolean Search Test</h3>
 		<div style="display: flex; flex-direction: row;">
-			<input type="text" />
+			<input type="text" value="AND this and that (something or else) AND AND that NOT"/>
 			<button id="submit">Submit Search</button>
 		</div>
 		<div id="output-container" class="output"></div>

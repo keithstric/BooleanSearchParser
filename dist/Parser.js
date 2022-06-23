@@ -582,7 +582,7 @@ class Parser {
                     let match = rule.test(token.value);
                     if (match !== -1) {
                         if (!token.isInsideQuotes) {
-                            const msg = `Invalid character at position ${token.position.start} "${rule.character}": `;
+                            const msg = `Invalid character at position ${token.position.start} &#39;${rule.character}&#39;: `;
                             token.errors.push(new Error(msg));
                         }
                     }
@@ -592,7 +592,7 @@ class Parser {
                     const prevToken = this.getPrecedingOperatorToken(tokens, idx);
                     if (prevToken && (!prevToken.token || (prevToken && prevToken.distance > 2))) {
                         const value = prevToken.token ? prevToken.token.value : token.value;
-                        const msg = `An operator should precede a grouping at position ${token.position.start} "${value}": `;
+                        const msg = `An operator should precede a grouping at position ${token.position.start} &#39;${value}&#39;: `;
                         token.errors.push(new Error(msg));
                     }
                 }
@@ -602,7 +602,7 @@ class Parser {
                     const nextToken2 = arr[idx + 2];
                     if ((nextToken && nextToken.type === Token_1.TokenType.OPERATOR) ||
                         (nextToken2 && nextToken2.type === Token_1.TokenType.OPERATOR)) {
-                        const msg = `Cannot have operators back to back at position ${token.position.start} "${token.value} ${nextToken.value}": `;
+                        const msg = `Cannot have operators back to back at position ${token.position.start} &#39;${token.value} ${nextToken.value}&#39;: `;
                         token.errors.push(new Error(msg));
                     }
                 }
@@ -617,7 +617,7 @@ class Parser {
                     const unclosedId = unclosedGroupToken.id;
                     const filteredTokens = tokens.filter(srcToken => srcToken.id === unclosedId);
                     if (filteredTokens && filteredTokens.length) {
-                        const msg = `Unmatched ${tokenType.msgNamePart} at position ${filteredTokens[0].position.start} "${filteredTokens[0].value}": `;
+                        const msg = `Unmatched ${tokenType.msgNamePart} at position ${filteredTokens[0].position.start} &#39;${filteredTokens[0].value}&#39;: `;
                         filteredTokens[0].errors.push(new Error(msg));
                     }
                 }
@@ -627,7 +627,7 @@ class Parser {
             const secondToken = tokens.length >= 2 ? tokens[1].type : null;
             if ((firstToken === OPERATOR || firstToken === POSSIBLE) ||
                 (firstToken === WHITE_SPACE && (secondToken && secondToken === OPERATOR || secondToken === POSSIBLE))) {
-                const msg = `A search must not begin with an operator at position 0 "${tokens[0].value}": `;
+                const msg = `A search must not begin with an operator at position 0 &#39;${tokens[0].value}&#39;: `;
                 tokens[0].errors.push(new Error(msg));
             }
             const lastIdx = tokens.length - 1;
@@ -636,7 +636,7 @@ class Parser {
             if ((lastToken === OPERATOR || lastToken === POSSIBLE) ||
                 (lastToken === WHITE_SPACE &&
                     (nextLastToken && nextLastToken === POSSIBLE || nextLastToken === OPERATOR))) {
-                const msg = `A search must not end with an operator at position ${tokens[lastIdx].position.start} "${tokens[lastIdx].value}": `;
+                const msg = `A search must not end with an operator at position ${tokens[lastIdx].position.start} &#39;${tokens[lastIdx].value}&#39;: `;
                 tokens[lastIdx].errors.push(new Error(msg));
             }
         }

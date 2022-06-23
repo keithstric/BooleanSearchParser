@@ -1,16 +1,16 @@
 # Boolean Search Parser
 
-This library is the boolean search parser used in the Allbirds Explore UI. This will take a search string and parse it returning "possible" boolean operators, actual boolean operators and any errors encountered.
+This library is a boolean search string parser. This will take a search string and parse it returning "possible" boolean operators, actual boolean operators and any errors encountered. It will also provide an HTML representation of the output so that you may style errors, possible operators, operators, etc.
 
 ## Using this library
 
-Either use `npm install` or clone directly into your project. If you use npm, you will need to provide credentials.
+Either use `npm install` or clone directly into your project.
 
-Once cloned, you should be able to instantiate a new `BooleanSearch` object and get it's tokens:
+Once cloned, you should be able to instantiate a new `BooleanSearch` object and get its tokens:
 
 ````ts
 import {BooleanSearch} from 'boolean-search-parser';
-const bs: BooleanSearch = new BooleanSearch('this and that or other not thing');
+const bs: BooleanSearch = new BooleanSearch('this and that or other NOT thing');
 const html: string = bs.html; // will automatically run the parser
 const tokens: Token[] = bs.tokens; // will automatically run the parser
 ````
