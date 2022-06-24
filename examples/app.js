@@ -31,7 +31,7 @@ function customOnSubmit() {
 		rules,
 		validationRules,
 		operatorStyleClass: 'success'
-	}
+	};
 	// custom configuration
 	const bs = new BSP.BooleanSearch(searchStr, customConfig);
 	customOutput.innerHTML = bs.html;

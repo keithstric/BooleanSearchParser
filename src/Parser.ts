@@ -379,7 +379,6 @@ export class Parser {
 		// For example, termAND will match the AND test
 		let matches: Match[] = [];
 		if (searchString && selectedRules) {
-			selectedRules = selectedRules;
 			const searchStr = searchString;
 			let subStr = '';
 

@@ -158,6 +158,7 @@ export class BooleanSearch {
 		}
 		return this._errors;
 	}
+
 	/**
 	 * Get the html for the entire search string
 	 * @type {string}
