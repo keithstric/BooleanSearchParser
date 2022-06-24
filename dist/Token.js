@@ -100,6 +100,11 @@ class Token {
         this._phrase = '';
         this._position = { start: -1, end: -1 };
         this._type = TokenType.TERM;
+        this._styleClasses = {
+            error: 'error',
+            operator: 'operator',
+            possibleOperator: 'warning'
+        };
         this._value = value;
         this._type = type;
         if (operation) {
@@ -148,6 +153,12 @@ class Token {
     set errors(errors) {
         this._errors = errors;
     }
+    get styles() {
+        return this._styleClasses;
+    }
+    set styles(styleClasses) {
+        this._styleClasses = styleClasses;
+    }
     /**
      * The html for this token
      * @type {string}
@@ -157,13 +168,17 @@ class Token {
         let styleClass = null;
         const { errors, rule, _html, type, value } = this;
         if (errors && errors.length) {
-            styleClass = 'error';
+            styleClass = this.styles.error;
             const errorStr = errors.map((err, idx) => err.message).join('&#10;');
             span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;
             this._html = value.replace(value, span);
         }
         else if (!_html && rule && value) {
-            styleClass = type === TokenType.POSSIBLE ? 'warning' : type === TokenType.OPERATOR ? 'operator' : '';
+            styleClass = type === TokenType.POSSIBLE
+                ? this.styles.possibleOperator
+                : type === TokenType.OPERATOR
+                    ? this.styles.operator
+                    : '';
             const titleStr = type === TokenType.POSSIBLE ? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).` : '';
             span = type !== TokenType.POSSIBLE && type !== TokenType.OPERATOR
                 ? value

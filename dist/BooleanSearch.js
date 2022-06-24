@@ -1,9 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BooleanSearch = void 0;
-const Token_1 = require("./Token");
-const Rule_1 = require("./Rule");
+exports.BooleanSearch = exports.DEFAULT_VALIDATION_RULES = exports.DEFAULT_RULES = void 0;
 const Parser_1 = require("./Parser");
+const Rule_1 = require("./Rule");
+const Token_1 = require("./Token");
+exports.DEFAULT_RULES = {
+    and: new Rule_1.Rule(/and/g, Token_1.TokenOperations.AND, Token_1.TokenType.POSSIBLE),
+    or: new Rule_1.Rule(/or/g, Token_1.TokenOperations.OR, Token_1.TokenType.POSSIBLE),
+    not: new Rule_1.Rule(/not/g, Token_1.TokenOperations.NOT, Token_1.TokenType.POSSIBLE),
+    AND: new Rule_1.Rule(/AND/g, Token_1.TokenOperations.AND),
+    plus: new Rule_1.Rule(/\+/g, Token_1.TokenOperations.AND),
+    OR: new Rule_1.Rule(/OR/g, Token_1.TokenOperations.OR),
+    tilde: new Rule_1.Rule(/~/g, Token_1.TokenOperations.OR),
+    NOT: new Rule_1.Rule(/NOT/g, Token_1.TokenOperations.NOT),
+    minus: new Rule_1.Rule(/-/g, Token_1.TokenOperations.NOT),
+    openParen: new Rule_1.Rule(/\(/g, Token_1.TokenOperations.OPEN, Token_1.TokenType.GROUPING),
+    closeParen: new Rule_1.Rule(/\)/g, Token_1.TokenOperations.CLOSE, Token_1.TokenType.GROUPING),
+    quote: new Rule_1.EscapeableRule(/"/g, Token_1.TokenOperations.NONE, Token_1.TokenType.QUOTE),
+    space: new Rule_1.Rule(/\s/g, Token_1.TokenOperations.NONE, Token_1.TokenType.WHITE_SPACE),
+    openAngle: new Rule_1.Rule(/\</g, Token_1.TokenOperations.NONE, Token_1.TokenType.ASCII),
+    closeAngle: new Rule_1.Rule(/\>/g, Token_1.TokenOperations.NONE, Token_1.TokenType.ASCII)
+};
+exports.DEFAULT_VALIDATION_RULES = {
+    openAngle: new Rule_1.ValidationRule(/\</g, '<'),
+    closeAngle: new Rule_1.ValidationRule(/\>/g, '>'),
+    openCurly: new Rule_1.ValidationRule(/\{/g, '{'),
+    closeCurly: new Rule_1.ValidationRule(/\}/g, '}'),
+    openSquare: new Rule_1.ValidationRule(/\[/g, '['),
+    closeSquare: new Rule_1.ValidationRule(/\]/g, ']'),
+    backSlash: new Rule_1.ValidationRule(/\\/g, '\\'),
+    forwardSlash: new Rule_1.ValidationRule(/\//g, '/'),
+    comma: new Rule_1.ValidationRule(/,/g, ','),
+    period: new Rule_1.ValidationRule(/\./g, '.')
+};
 /**
  * The classes and methods in this package were based off of the {@link https://github.com/frederickf/bqpjs} library.
  * The BooleanSearch class is the entry point to the parser. The following
@@ -20,18 +49,22 @@ class BooleanSearch {
         this._maxLength = 511;
         this._operators = [];
         this._possibleOperators = [];
-        this._ruleNames = [];
         this._selectedRules = [];
         this._selectedValidationRules = [];
         this._srchString = '';
         this._tokens = [];
-        this._validationRuleNames = [];
+        this._styles = {
+            error: 'error',
+            operator: 'operator',
+            possibleOperator: 'warning'
+        };
         this.searchString = srchString ? srchString : '';
         if (config) {
             this.rules = config.rules || this.rules;
-            this.ruleNames = config.ruleNames || this.ruleNames;
             this.validationRules = config.validationRules || this.validationRules;
-            this.validationRuleNames = config.validationRuleNames || this.validationRuleNames;
+            this._styles.possibleOperator = config.possibleOperatorStyleClass || 'warning';
+            this._styles.error = config.errorStyleClass || 'error';
+            this._styles.operator = config.operatorStyleClass || 'operator';
         }
     }
     /**
@@ -42,7 +75,7 @@ class BooleanSearch {
     addRule(ruleName, rule) {
         const rules = Object.assign(Object.assign({}, this.rules), { [ruleName]: rule });
         this.rules = rules;
-        console.warn('If you want this rule to be used, be sure to add the rule name to the ruleNames array in the appropriate position');
+        // console.warn('If you want this rule to be used, be sure to add the rule name to the ruleNames array in the appropriate position');
     }
     /**
      * Fix the possible operators and update the search string
@@ -98,15 +131,16 @@ class BooleanSearch {
                 const searchStringLen = searchString.length;
                 const isTooLong = searchStringLen > maxLength;
                 const htmlArr = tokens.map((token, idx, arr) => {
+                    token.styles = this.styles;
                     const { html, position, value } = token;
                     let returnHtml = html;
                     if (isTooLong) {
                         if (position.start <= maxLength && position.end >= maxLength) {
                             if (idx + 1 === tokens.length) {
-                                returnHtml = `<span class="error">${value}</span>`;
+                                returnHtml = `<span class="${this.styles.error}">${value}</span>`;
                             }
                             else {
-                                returnHtml = `<span class="error">${value}`;
+                                returnHtml = `<span class="${this.styles.error}">${value}`;
                             }
                         }
                         else if (idx + 1 === tokens.length) {
@@ -115,8 +149,7 @@ class BooleanSearch {
                     }
                     return returnHtml;
                 });
-                let html = htmlArr.join('');
-                this._html = html;
+                this._html = htmlArr.join('');
             }
             catch (e) {
                 console.error(e);
@@ -124,6 +157,9 @@ class BooleanSearch {
             }
         }
         return this._html;
+    }
+    get styles() {
+        return this._styles;
     }
     /**
      * True if there are errors
@@ -187,29 +223,7 @@ class BooleanSearch {
      * @type {string[]}
      */
     get ruleNames() {
-        if (!this._ruleNames || !this._ruleNames.length) {
-            this._ruleNames = [
-                'and',
-                'or',
-                'not',
-                'AND',
-                'plus',
-                'OR',
-                'tilde',
-                'NOT',
-                'minus',
-                'openParen',
-                'closeParen',
-                'quote',
-                'space',
-                'openAngle',
-                'closeAngle'
-            ];
-        }
-        return this._ruleNames;
-    }
-    set ruleNames(ruleNames) {
-        this._ruleNames = ruleNames || [];
+        return Object.keys(this.rules);
     }
     /**
      * Objet of rules with a name. The key should match a value in the ruleNames array
@@ -217,23 +231,7 @@ class BooleanSearch {
      */
     get rules() {
         if (!this._rules) {
-            this._rules = {
-                and: new Rule_1.Rule(/and/g, Token_1.TokenOperations.AND, Token_1.TokenType.POSSIBLE),
-                or: new Rule_1.Rule(/or/g, Token_1.TokenOperations.OR, Token_1.TokenType.POSSIBLE),
-                not: new Rule_1.Rule(/not/g, Token_1.TokenOperations.NOT, Token_1.TokenType.POSSIBLE),
-                AND: new Rule_1.Rule(/AND/g, Token_1.TokenOperations.AND),
-                plus: new Rule_1.Rule(/\+/g, Token_1.TokenOperations.AND),
-                OR: new Rule_1.Rule(/OR/g, Token_1.TokenOperations.OR),
-                tilde: new Rule_1.Rule(/~/g, Token_1.TokenOperations.OR),
-                NOT: new Rule_1.Rule(/NOT/g, Token_1.TokenOperations.NOT),
-                minus: new Rule_1.Rule(/-/g, Token_1.TokenOperations.NOT),
-                openParen: new Rule_1.Rule(/\(/g, Token_1.TokenOperations.OPEN, Token_1.TokenType.GROUPING),
-                closeParen: new Rule_1.Rule(/\)/g, Token_1.TokenOperations.CLOSE, Token_1.TokenType.GROUPING),
-                quote: new Rule_1.EscapeableRule(/"/g, Token_1.TokenOperations.NONE, Token_1.TokenType.QUOTE),
-                space: new Rule_1.Rule(/\s/g, Token_1.TokenOperations.NONE, Token_1.TokenType.WHITE_SPACE),
-                openAngle: new Rule_1.Rule(/\</g, Token_1.TokenOperations.NONE, Token_1.TokenType.ASCII),
-                closeAngle: new Rule_1.Rule(/\>/g, Token_1.TokenOperations.NONE, Token_1.TokenType.ASCII)
-            };
+            this._rules = exports.DEFAULT_RULES;
         }
         return this._rules;
     }
@@ -269,7 +267,9 @@ class BooleanSearch {
      */
     get selectedValidationRules() {
         if (!this._selectedValidationRules || !this._selectedValidationRules.length) {
-            this._selectedValidationRules = this.validationRuleNames.filter((name) => name in this.validationRules).map((name) => this.validationRules[name]);
+            this._selectedValidationRules = this.validationRuleNames
+                .filter((name) => name in this.validationRules)
+                .map((name) => this.validationRules[name]);
         }
         return this._selectedValidationRules;
     }
@@ -297,24 +297,7 @@ class BooleanSearch {
      * @type {string[]}
      */
     get validationRuleNames() {
-        if (!this._validationRuleNames || !this._validationRuleNames.length) {
-            this._validationRuleNames = [
-                'openAngle',
-                'closeAngle',
-                'openCurly',
-                'closeCurly',
-                'openSquare',
-                'closeSquare',
-                'backslash',
-                'forwardSlash',
-                'comma',
-                'period',
-            ];
-        }
-        return this._validationRuleNames;
-    }
-    set validationRuleNames(validationRuleNames) {
-        this._validationRuleNames = validationRuleNames || [];
+        return Object.keys(this.validationRules);
     }
     /**
      * Objet of rules with a name. The key should match a value in the ruleNames array
@@ -322,18 +305,7 @@ class BooleanSearch {
      */
     get validationRules() {
         if (!this._validationRules) {
-            this._validationRules = {
-                openAngle: new Rule_1.ValidationRule(/\</g, '<'),
-                closeAngle: new Rule_1.ValidationRule(/\>/g, '>'),
-                openCurly: new Rule_1.ValidationRule(/\{/g, '{'),
-                closeCurly: new Rule_1.ValidationRule(/\}/g, '}'),
-                openSquare: new Rule_1.ValidationRule(/\[/g, '['),
-                closeSquare: new Rule_1.ValidationRule(/\]/g, ']'),
-                backSlash: new Rule_1.ValidationRule(/\\/g, '\\'),
-                forwardSlash: new Rule_1.ValidationRule(/\//g, '/'),
-                comma: new Rule_1.ValidationRule(/,/g, ','),
-                period: new Rule_1.ValidationRule(/\./g, '.')
-            };
+            this._validationRules = exports.DEFAULT_VALIDATION_RULES;
         }
         return this._validationRules;
     }

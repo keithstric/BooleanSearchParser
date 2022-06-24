@@ -87,6 +87,12 @@ export interface TokenPosition {
 	end: number;
 }
 
+export interface TokenStyleClasses {
+	error: string;
+	operator: string;
+	possibleOperator: string;
+}
+
 /**
  * A token defines a piece of text found in the search string. This can be single words and characters
  * but also multiple words (i.e. the text between quotes)
@@ -105,6 +111,11 @@ export class Token {
 	private _rule: Rule | undefined;
 	private _type: TokenType = TokenType.TERM;
 	private _value: string;
+	private _styleClasses: TokenStyleClasses = {
+		error: 'error',
+		operator: 'operator',
+		possibleOperator: 'warning'
+	};
 
 	/**
 	 * Create a new instance of Token and assign a random ID string
@@ -169,6 +180,14 @@ export class Token {
 		this._errors = errors;
 	}
 
+	get styles() {
+		return this._styleClasses;
+	}
+
+	set styles(styleClasses) {
+		this._styleClasses = styleClasses;
+	}
+
 	/**
 	 * The html for this token
 	 * @type {string}
@@ -178,12 +197,16 @@ export class Token {
 		let styleClass = null;
 		const {errors, rule, _html, type, value} = this;
 		if (errors && errors.length) {
-			styleClass = 'error';
+			styleClass = this.styles.error;
 			const errorStr: string = errors.map((err, idx) => err.message).join('&#10;');
 			span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;
 			this._html = value.replace(value, span);
 		}else if (!_html && rule && value) {
-			styleClass = type === TokenType.POSSIBLE ? 'warning' : type === TokenType.OPERATOR ? 'operator' : '';
+			styleClass = type === TokenType.POSSIBLE
+				? this.styles.possibleOperator
+				: type === TokenType.OPERATOR
+					? this.styles.operator
+					: '';
 			const titleStr = type === TokenType.POSSIBLE ? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).` : '';
 			span = type !== TokenType.POSSIBLE && type !== TokenType.OPERATOR
 				? value
