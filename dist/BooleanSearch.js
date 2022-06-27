@@ -126,7 +126,8 @@ class BooleanSearch {
      * @type {string}
      */
     get html() {
-        if (!this._html && this.tokens && this.tokens.length) {
+        var _a;
+        if (!this._html && ((_a = this.tokens) === null || _a === void 0 ? void 0 : _a.length)) {
             try {
                 const { tokens, maxLength, searchString } = this;
                 const searchStringLen = searchString.length;

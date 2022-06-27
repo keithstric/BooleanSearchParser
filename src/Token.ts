@@ -194,24 +194,52 @@ export class Token {
 	 * @type {string}
 	 */
 	get html() {
-		let span = null;
-		let styleClass = null;
-		const {errors, rule, _html, type, value} = this;
-		if (errors?.length) {
-			styleClass = this.styles.error;
-			const errorStr: string = errors.map((err, idx) => err.message).join('&#10;');
-			span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;
-			this._html = value.replace(value, span);
-		}else if (!_html && rule && value) {
-			styleClass = type === TokenType.POSSIBLE
+		let span = '';
+		const {errors, rule, _html, type, value, operation} = this;
+		const styleClass = errors.length
+			? this.styles.error
+			: type === TokenType.POSSIBLE
 				? this.styles.possibleOperator
 				: type === TokenType.OPERATOR
 					? this.styles.operator
 					: '';
-			const titleStr = type === TokenType.POSSIBLE ? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).` : '';
-			span = type !== TokenType.POSSIBLE && type !== TokenType.OPERATOR
-				? value
-				: `<span class="${styleClass}" title="${titleStr}">${value}</span>`;
+		const titleStr = type === TokenType.POSSIBLE
+			? `Possible operator. Operators should be capitalized (i.e ${value.toUpperCase()}).`
+			: errors?.length
+				? errors.map((err, idx) => err.message).join('&#10;')
+				: '';
+		if (!_html && rule && value) {
+			switch (type) {
+				case TokenType.TERM:
+					span = `<span class="term">${value}</span>`
+					break;
+				case TokenType.GROUPING:
+					const groupingChildHtml = this.errors.length
+						? `<span class="${styleClass}" title="${titleStr}">${value}</span>`
+						: `${value}`;
+					if (operation === TokenOperations.OPEN) {
+						span = `<div class="grouping">${groupingChildHtml}`;
+					}else if (operation === TokenOperations.CLOSE) {
+						span = `${groupingChildHtml}</div>`;
+					}
+					break;
+				case TokenType.QUOTE:
+					const quoteChildHtml = this.errors.length
+						? `<span class="${styleClass}" title="${titleStr}">${value}</span>`
+						: `${value}`;
+					if (operation === TokenOperations.OPEN) {
+						span = `<div class="grouping">${quoteChildHtml}`;
+					}else if (operation === TokenOperations.CLOSE) {
+						span = `${quoteChildHtml}</div>`;
+					}
+					break;
+				case TokenType.OPERATOR:
+					span = `<span class="${styleClass}" title="${titleStr}">${value}</span>`;
+					break;
+				case TokenType.POSSIBLE:
+					span = `<span class="${styleClass}" title="${titleStr}">${value}</span>`;
+					break;
+			}
 			this._html = rule.pattern ? value.replace(rule.pattern, span) : this.value;
 		}else if (!_html && value) {
 			this._html = this.value;

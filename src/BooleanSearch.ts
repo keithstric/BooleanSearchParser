@@ -164,7 +164,7 @@ export class BooleanSearch {
 	 * @type {string}
 	 */
 	get html() {
-		if (!this._html && this.tokens && this.tokens.length) {
+		if (!this._html && this.tokens?.length) {
 			try {
 				const {tokens, maxLength, searchString} = this;
 				const searchStringLen = searchString.length;
