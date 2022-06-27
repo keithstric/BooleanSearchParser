@@ -106,8 +106,9 @@ class BooleanSearch {
      * @type {Error[]}
      */
     get errors() {
-        if (!this._errors || !this._errors.length) {
-            if (this._tokens && this._tokens.length) { // Dont want to initiate parsing of tokens
+        var _a;
+        if (!((_a = this._errors) === null || _a === void 0 ? void 0 : _a.length)) {
+            if (this._tokens.length) { // Dont want to initiate parsing of tokens
                 const errorTokens = this._tokens.filter(token => token.errors && token.errors.length);
                 let errors = this._errors || [];
                 errorTokens.forEach((token) => {
@@ -211,8 +212,9 @@ class BooleanSearch {
      * @type {Token[]}
      */
     get possibleOperators() {
-        if (!this._possibleOperators || !this._possibleOperators.length) {
-            if (this._tokens && this._tokens.length) {
+        var _a, _b;
+        if (!((_a = this._possibleOperators) === null || _a === void 0 ? void 0 : _a.length)) {
+            if ((_b = this._tokens) === null || _b === void 0 ? void 0 : _b.length) {
                 this._possibleOperators = this.tokens.filter((token) => token.type === Token_1.TokenType.POSSIBLE);
             }
         }
@@ -253,7 +255,8 @@ class BooleanSearch {
      * @type {Rule[]}
      */
     get selectedRules() {
-        if (!this._selectedRules || !this._selectedRules.length) {
+        var _a;
+        if (!((_a = this._selectedRules) === null || _a === void 0 ? void 0 : _a.length)) {
             this._selectedRules = this.ruleNames.filter((name) => name in this.rules).map((name) => this.rules[name]);
         }
         return this._selectedRules;
@@ -266,7 +269,8 @@ class BooleanSearch {
      * @type {ValidationRule[]}
      */
     get selectedValidationRules() {
-        if (!this._selectedValidationRules || !this._selectedValidationRules.length) {
+        var _a;
+        if (!((_a = this._selectedValidationRules) === null || _a === void 0 ? void 0 : _a.length)) {
             this._selectedValidationRules = this.validationRuleNames
                 .filter((name) => name in this.validationRules)
                 .map((name) => this.validationRules[name]);
@@ -281,7 +285,8 @@ class BooleanSearch {
      * @type {Token[]}
      */
     get tokens() {
-        if ((!this._tokens || !this._tokens.length) && this.searchString) {
+        var _a;
+        if ((!((_a = this._tokens) === null || _a === void 0 ? void 0 : _a.length)) && this.searchString) {
             this._tokens = this.parser.parse();
         }
         else if (!this.searchString) {

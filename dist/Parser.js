@@ -14,7 +14,6 @@ class Parser {
         this._finalTokens = [];
         this._initialMatches = [];
         this._initialTokens = [];
-        this._matches = [];
         this._searchString = '';
         this._tree = [];
         this._validatedTokens = [];
@@ -334,7 +333,7 @@ class Parser {
         let newTokens = [];
         if (tokens && tokens.length) {
             const quotes = tokens.filter(token => token.type === Token_1.TokenType.QUOTE);
-            if (quotes && quotes.length) {
+            if (quotes === null || quotes === void 0 ? void 0 : quotes.length) {
                 let currentValue = '';
                 let unclosedQuoteToken = null;
                 tokens.forEach((token, idx, arr) => {
@@ -342,6 +341,7 @@ class Parser {
                         if (token.type === Token_1.TokenType.QUOTE) { // opening quote
                             unclosedQuoteToken = token;
                             token.operation = Token_1.TokenOperations.OPEN;
+                            token.isSibling = true;
                             token.type === Token_1.TokenType.QUOTE;
                         }
                         newTokens.push(token);
@@ -353,8 +353,9 @@ class Parser {
                             newTokens.push(newToken);
                             currentValue = '';
                             unclosedQuoteToken = null;
-                            token.type = Token_1.TokenType.QUOTE;
                             token.operation = Token_1.TokenOperations.CLOSE;
+                            token.isSibling = true;
+                            token.type = Token_1.TokenType.QUOTE;
                             newTokens.push(token);
                         }
                         else { // not to the closing quote yet, just keep adding to the currentValue
@@ -557,7 +558,7 @@ class Parser {
     getPrecedingOperatorToken(tokens, startIdx) {
         let returnToken = null;
         let returnObj = null;
-        if (tokens && tokens.length && (tokens.length - 1) >= startIdx) {
+        if ((tokens === null || tokens === void 0 ? void 0 : tokens.length) && (tokens.length - 1) >= startIdx) {
             returnToken = tokens[startIdx];
             let position = startIdx;
             let count = 0;
@@ -641,7 +642,6 @@ class Parser {
         this._finalTokens = [];
         this._initialMatches = [];
         this._initialTokens = [];
-        this._matches = [];
         this._tree = [];
         this._validatedTokens = [];
         this._wholeTokens = [];

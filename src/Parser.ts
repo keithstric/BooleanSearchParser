@@ -25,7 +25,6 @@ export class Parser {
 	private _finalTokens: Token[] = [];
 	private _initialMatches: Match[] = [];
 	private _initialTokens: Token[] = [];
-	private _matches: Match[] = [];
 	private _searchString: string = '';
 	private _selectedRules: Rule[];
 	private _tree: Token[] = [];
@@ -351,7 +350,7 @@ export class Parser {
 		let newTokens: Token[] = [];
 		if (tokens && tokens.length) {
 			const quotes = tokens.filter(token => token.type === TokenType.QUOTE);
-			if (quotes && quotes.length) {
+			if (quotes?.length) {
 				let currentValue = '';
 				let unclosedQuoteToken: Token | null = null;
 				tokens.forEach((token: Token, idx: number, arr: Token[]) => {
@@ -359,6 +358,7 @@ export class Parser {
 						if (token.type === TokenType.QUOTE) { // opening quote
 							unclosedQuoteToken = token;
 							token.operation = TokenOperations.OPEN;
+							token.isSibling = true;
 							token.type === TokenType.QUOTE;
 						}
 						newTokens.push(token);
@@ -369,8 +369,9 @@ export class Parser {
 							newTokens.push(newToken);
 							currentValue = '';
 							unclosedQuoteToken = null;
-							token.type = TokenType.QUOTE;
 							token.operation = TokenOperations.CLOSE;
+							token.isSibling = true;
+							token.type = TokenType.QUOTE;
 							newTokens.push(token);
 						} else { // not to the closing quote yet, just keep adding to the currentValue
 							if (!this.isTermOrOperator(token) && token.type !== TokenType.WHITE_SPACE) {
@@ -570,7 +571,7 @@ export class Parser {
 	getPrecedingOperatorToken(tokens: Token[], startIdx: number): { token: Token, distance: number } | null {
 		let returnToken: Token | null = null;
 		let returnObj = null;
-		if (tokens && tokens.length && (tokens.length - 1) >= startIdx) {
+		if (tokens?.length && (tokens.length - 1) >= startIdx) {
 			returnToken = tokens[startIdx];
 			let position = startIdx;
 			let count = 0;
@@ -657,7 +658,6 @@ export class Parser {
 		this._finalTokens = [];
 		this._initialMatches = [];
 		this._initialTokens = [];
-		this._matches = [];
 		this._tree = [];
 		this._validatedTokens = [];
 		this._wholeTokens = [];

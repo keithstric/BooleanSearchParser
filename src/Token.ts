@@ -197,7 +197,7 @@ export class Token {
 		let span = null;
 		let styleClass = null;
 		const {errors, rule, _html, type, value} = this;
-		if (errors && errors.length) {
+		if (errors?.length) {
 			styleClass = this.styles.error;
 			const errorStr: string = errors.map((err, idx) => err.message).join('&#10;');
 			span = `<span class="${styleClass}" title="${errorStr}">${value}</span>`;

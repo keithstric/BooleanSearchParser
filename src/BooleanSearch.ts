@@ -144,8 +144,8 @@ export class BooleanSearch {
 	 * @type {Error[]}
 	 */
 	get errors() {
-		if (!this._errors || !this._errors.length) {
-			if (this._tokens && this._tokens.length) { // Dont want to initiate parsing of tokens
+		if (!this._errors?.length) {
+			if (this._tokens.length) { // Dont want to initiate parsing of tokens
 				const errorTokens = this._tokens.filter(token => token.errors && token.errors.length);
 				let errors = this._errors || [];
 				errorTokens.forEach((token: Token) => {
@@ -255,8 +255,8 @@ export class BooleanSearch {
 	 * @type {Token[]}
 	 */
 	get possibleOperators() {
-		if (!this._possibleOperators || !this._possibleOperators.length) {
-			if (this._tokens && this._tokens.length) {
+		if (!this._possibleOperators?.length) {
+			if (this._tokens?.length) {
 				this._possibleOperators = this.tokens.filter((token) => token.type === TokenType.POSSIBLE);
 			}
 		}
@@ -303,7 +303,7 @@ export class BooleanSearch {
 	 * @type {Rule[]}
 	 */
 	get selectedRules() {
-		if (!this._selectedRules || !this._selectedRules.length) {
+		if (!this._selectedRules?.length) {
 			this._selectedRules = this.ruleNames.filter((name) => name in this.rules).map((name) => this.rules[name]);
 		}
 		return this._selectedRules;
@@ -318,7 +318,7 @@ export class BooleanSearch {
 	 * @type {ValidationRule[]}
 	 */
 	get selectedValidationRules() {
-		if (!this._selectedValidationRules || !this._selectedValidationRules.length) {
+		if (!this._selectedValidationRules?.length) {
 			this._selectedValidationRules = this.validationRuleNames
 				.filter((name) => name in this.validationRules)
 				.map((name) => this.validationRules[name]);
@@ -335,7 +335,7 @@ export class BooleanSearch {
 	 * @type {Token[]}
 	 */
 	get tokens() {
-		if ((!this._tokens || !this._tokens.length) && this.searchString) {
+		if ((!this._tokens?.length) && this.searchString) {
 			this._tokens = this.parser.parse();
 		}else if (!this.searchString) {
 			console.warn('You must provide a search string to parse for tokens');
