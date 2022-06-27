@@ -1,5 +1,5 @@
-import { Token, TokenType, TokenOperations } from "./Token";
-import { Rule, ValidationRule } from "./Rule";
+import {Rule, ValidationRule} from "./Rule";
+import {Token, TokenOperations, TokenType} from "./Token";
 
 /**
  * The match interface
@@ -336,8 +336,9 @@ export class Parser {
 				while(kidToken) {
 					const {operation} = kidToken;
 					if(this.isGrouping(kidToken) && operation === OPEN) {
+						kidToken.isChild = true;
 						parent.children.push(kidToken);
-						inProcParents.unshift(parent);
+						inProcParents.unshift(kidToken);
 						getKids(kidToken);
 						kidToken = queTokens.shift();
 					}else if (this.isGrouping(kidToken) && operation === CLOSE) {
@@ -345,13 +346,15 @@ export class Parser {
 						// of the currently processing parent. It should be a child of the previous
 						// parent if it exists.
 						const prevParent = inProcParents.shift();
-						if (prevParent) {
-							prevParent.children.push(kidToken);
+						if (prevParent && inProcParents[0] && inProcParents[0]?.id !== prevParent.id) {
+							kidToken.isChild = true;
+							inProcParents[0].children.push(kidToken);
 						}else{
 							queTokens.unshift(kidToken);
 						}
 						break;
 					}else{
+						kidToken.isChild = true;
 						parent.children.push(kidToken);
 						kidToken = queTokens.shift();
 					}
@@ -361,6 +364,7 @@ export class Parser {
 			while (token) {
 				const {operation} = token;
 				if (this.isGrouping(token) && operation === OPEN) {
+					inProcParents.unshift(token);
 					getKids(token);
 				}
 				tree.push(token);
@@ -512,8 +516,7 @@ export class Parser {
 		if (token) {
 			const { type } = token;
 			const { QUOTE, GROUPING } = TokenType;
-			const returnVal = (type === QUOTE || type === GROUPING);
-			return returnVal;
+			return (type === QUOTE || type === GROUPING);
 		}
 		return false;
 	}

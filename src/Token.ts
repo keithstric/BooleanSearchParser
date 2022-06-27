@@ -104,6 +104,7 @@ export class Token {
 	private _html: string = '';
 	private _id: string = '';
 	private _isChild: boolean = false;
+	private _isSibling: boolean = false;
 	private _isInsideQuotes: boolean = false;
 	private _operation: TokenOperations | undefined;
 	private _phrase: string = '';
@@ -236,6 +237,14 @@ export class Token {
 
 	set isChild(isChild) {
 		this._isChild = isChild;
+	}
+
+	get isSibling() {
+		return this._isSibling;
+	}
+
+	set isSibling(isSibling) {
+		this._isSibling = isSibling;
 	}
 
 	/**

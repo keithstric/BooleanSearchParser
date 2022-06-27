@@ -347,6 +347,10 @@ export class BooleanSearch {
 		this._tokens = tokens;
 	}
 
+	get tree() {
+		return this.parser.tree;
+	}
+
 	/**
 	 * Array of the rule names we want to use when matching tokens
 	 * @type {string[]}

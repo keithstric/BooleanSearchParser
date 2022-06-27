@@ -312,12 +312,14 @@ class Parser {
             const queTokens = Array.from(tokens);
             const inProcParents = []; // Populate for nested groups
             const getKids = (parent) => {
+                var _a;
                 let kidToken = queTokens.shift();
                 while (kidToken) {
                     const { operation } = kidToken;
                     if (this.isGrouping(kidToken) && operation === OPEN) {
+                        kidToken.isChild = true;
                         parent.children.push(kidToken);
-                        inProcParents.unshift(parent);
+                        inProcParents.unshift(kidToken);
                         getKids(kidToken);
                         kidToken = queTokens.shift();
                     }
@@ -326,8 +328,9 @@ class Parser {
                         // of the currently processing parent. It should be a child of the previous
                         // parent if it exists.
                         const prevParent = inProcParents.shift();
-                        if (prevParent) {
-                            prevParent.children.push(kidToken);
+                        if (prevParent && inProcParents[0] && ((_a = inProcParents[0]) === null || _a === void 0 ? void 0 : _a.id) !== prevParent.id) {
+                            kidToken.isChild = true;
+                            inProcParents[0].children.push(kidToken);
                         }
                         else {
                             queTokens.unshift(kidToken);
@@ -335,6 +338,7 @@ class Parser {
                         break;
                     }
                     else {
+                        kidToken.isChild = true;
                         parent.children.push(kidToken);
                         kidToken = queTokens.shift();
                     }
@@ -344,6 +348,7 @@ class Parser {
             while (token) {
                 const { operation } = token;
                 if (this.isGrouping(token) && operation === OPEN) {
+                    inProcParents.unshift(token);
                     getKids(token);
                 }
                 tree.push(token);
@@ -491,8 +496,7 @@ class Parser {
         if (token) {
             const { type } = token;
             const { QUOTE, GROUPING } = Token_1.TokenType;
-            const returnVal = (type === QUOTE || type === GROUPING);
-            return returnVal;
+            return (type === QUOTE || type === GROUPING);
         }
         return false;
     }

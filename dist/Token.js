@@ -96,6 +96,7 @@ class Token {
         this._html = '';
         this._id = '';
         this._isChild = false;
+        this._isSibling = false;
         this._isInsideQuotes = false;
         this._phrase = '';
         this._position = { start: -1, end: -1 };
@@ -205,6 +206,12 @@ class Token {
     }
     set isChild(isChild) {
         this._isChild = isChild;
+    }
+    get isSibling() {
+        return this._isSibling;
+    }
+    set isSibling(isSibling) {
+        this._isSibling = isSibling;
     }
     /**
      * True if this token is inside quotes
