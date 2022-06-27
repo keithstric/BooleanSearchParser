@@ -40,6 +40,34 @@ export class Parser {
 	}
 
 	/**
+	 * The string we're going to parse
+	 * @type {string}
+	 */
+	get searchString() {
+		return this._searchString;
+	}
+
+	set searchString(searchString) {
+		this.reset();
+		this._searchString = searchString;
+	}
+
+	/**
+	 * The tokens with errors and all manipulation done. 4th pass
+	 * @type {Token[]}
+	 */
+	get validatedTokens() {
+		if (!this._validatedTokens || !this._validatedTokens.length) {
+			if (this.finalTokens && this.finalTokens.length && this.validationRules && this.validationRules.length){
+				this._validatedTokens = this.validateTokens(this.finalTokens, this.validationRules);
+			}else if (!this.validationRules || !this.validationRules.length) {
+				throw new Error('You must provide validation rules in order to validate the tokens');
+			}
+		}
+		return this._validatedTokens;
+	}
+
+	/**
 	 * Tokens that have had split words put back togther and words between quotes
 	 * combined. 3rd pass
 	 * @type {Token[]}
@@ -54,18 +82,15 @@ export class Parser {
 	}
 
 	/**
-	 * The initial matches gathered from the searchString
-	 * @type {Match[]}
+	 * The tokens with split words combined. 2nd pass
 	 */
-	get initialMatches() {
-		if (!this._initialMatches || !this._initialMatches.length) {
-			if (this.searchString && this.selectedRules && this.selectedRules.length) {
-				this._initialMatches = this.getInitialMatches(this.searchString, this.selectedRules);
-			}else{
-				throw new Error('You must provide a search string and selected rules');
+	get wholeTokens() {
+		if (!this._wholeTokens || !this._wholeTokens.length) {
+			if (this.initialTokens && this.initialTokens.length){
+				this._wholeTokens = this.createTermsFromSplits(this.initialTokens);
 			}
 		}
-		return this._initialMatches;
+		return this._wholeTokens;
 	}
 
 	/**
@@ -82,8 +107,25 @@ export class Parser {
 	}
 
 	/**
+	 * The initial matches gathered from the searchString
+	 * @type {Match[]}
+	 */
+	get initialMatches() {
+		if (!this._initialMatches || !this._initialMatches.length) {
+			if (this.searchString && this.selectedRules && this.selectedRules.length) {
+				const initMatches = this.getInitialMatches(this.searchString, this.selectedRules);
+				this._initialMatches = this.getMatchPhrases(initMatches);
+			}else{
+				throw new Error('You must provide a search string and selected rules');
+			}
+		}
+		return this._initialMatches;
+	}
+
+	/**
 	 * The matches with phrases added
 	 * @type {Match[]}
+	 * @deprecated
 	 */
 	get matches() {
 		if (!this._matches || !this._matches.length) {
@@ -92,19 +134,6 @@ export class Parser {
 			}
 		}
 		return this._matches;
-	}
-
-	/**
-	 * The string we're going to parse
-	 * @type {string}
-	 */
-	get searchString() {
-		return this._searchString;
-	}
-
-	set searchString(searchString) {
-		this.reset();
-		this._searchString = searchString;
 	}
 
 	/**
@@ -129,38 +158,11 @@ export class Parser {
 	}
 
 	/**
-	 * The tokens with errors and all manipulation done. 4th pass
-	 * @type {Token[]}
-	 */
-	get validatedTokens() {
-		if (!this._validatedTokens || !this._validatedTokens.length) {
-			if (this.finalTokens && this.finalTokens.length && this.validationRules && this.validationRules.length){
-				this._validatedTokens = this.validateTokens(this.finalTokens, this.validationRules);
-			}else if (!this.validationRules || !this.validationRules.length) {
-				throw new Error('You must provide validation rules in order to validate the tokens');
-			}
-		}
-		return this._validatedTokens;
-	}
-
-	/**
 	 * The rules we use for validating tokens
 	 * @type {ValidationRule[]}
 	 */
 	get validationRules() {
 		return this._validationRules;
-	}
-
-	/**
-	 * The tokens with split words combined. 2nd pass
-	 */
-	get wholeTokens() {
-		if (!this._wholeTokens || !this._wholeTokens.length) {
-			if (this.initialTokens && this.initialTokens.length){
-				this._wholeTokens = this.createTermsFromSplits(this.initialTokens);
-			}
-		}
-		return this._wholeTokens;
 	}
 
 	/**
