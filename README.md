@@ -8,15 +8,15 @@ The main consumable of this package is the HTML output by the parser. Providing 
 
 ### Here is an example with a lot of errors
 
-![error-test.png](./readme-assets/Error-Test.png)
+![error-test.png](https://github.com/keithstric/BooleanSearchParser/raw/master/readme-assets/Error-Test.png)
 
 #### Here are the errors within the BooleanSearch class
 
-![error-array.png](./readme-assets/Error-Array.png)
+![error-array.png](https://github.com/keithstric/BooleanSearchParser/raw/master/readme-assets/Error-Array.png)
 
 #### Here are the tokens within the BooleanSearch class
 
-![error-tokens.png](./readme-assets/Error-Tokens.png)
+![error-tokens.png](https://github.com/keithstric/BooleanSearchParser/raw/master/readme-assets/Error-Tokens.png)
 
 #### Here is the HTML output
 
