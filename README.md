@@ -37,11 +37,11 @@ that
 
 ### Here is an example with no errors
 
-![success-test.png](./readme-assets/Success-Test.png)
+![success-test.png](https://github.com/keithstric/BooleanSearchParser/raw/master/readme-assets/Success-Test.png)
 
 #### Here are the success tokens
 
-![success-tokens.png](./readme-assets/Success-Tokens.png)
+![success-tokens.png](https://github.com/keithstric/BooleanSearchParser/raw/master/readme-assets/Success-Tokens.png)
 
 #### Here is the HTML output
 
