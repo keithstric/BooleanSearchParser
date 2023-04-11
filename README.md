@@ -32,7 +32,9 @@ that
   else)
 </div>
 <span class="error" title="Cannot have operators back to back at position 38 &#39;AND  &#39;: ">AND</span>
-<span class="operator" title="">AND</span>that<span class="error" title="A search must not end with an operator at position 51 &#39;NOT&#39;: ">NOT</span>
+<span class="operator" title="">AND</span>
+that
+<span class="error" title="A search must not end with an operator at position 51 &#39;NOT&#39;: ">NOT</span>
 ```
 
 ### Here is an example with no errors
