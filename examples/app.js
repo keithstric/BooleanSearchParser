@@ -1,6 +1,5 @@
 const BSP = require('boolean-search-parser');
 
-
 const defaultSearchField = document.querySelector('#default-field');
 const defaultOutput = document.querySelector('#default-output-container');
 const defaultButton = document.querySelector('#default-submit');

@@ -2,6 +2,63 @@
 
 This library is a boolean search string parser. This will take a search string and parse it returning "possible" boolean operators, actual boolean operators and any errors encountered. It will also provide an HTML representation of the output so that you may style errors, possible operators, operators, etc.
 
+## Output
+
+The main consumable of this package is the HTML output by the parser. Providing css styles for all the pieces/parts makes this highly customizable in how you communicate boolean search errors to your users.
+
+### Here is an example with a lot of errors
+
+![error-test.png](./readme-assets/Error-Test.png)
+
+#### Here are the errors within the BooleanSearch class
+
+![error-array.png](./readme-assets/Error-Array.png)
+
+#### Here are the tokens within the BooleanSearch class
+
+![error-tokens.png](./readme-assets/Error-Tokens.png)
+
+#### Here is the HTML output
+
+```html
+<span class="error" title="A search must not begin with an operator at position 0 &#39;AND&#39;: ">AND</span>
+this
+<span class="warning" title="Possible operator. Operators should be capitalized (i.e AND).">and</span>
+that
+<div class="grouping">
+  <span class="error" title="An operator should precede a grouping at position 18 &#39;and&#39;: ">(</span>
+  something
+  <span class="warning" title="Possible operator. Operators should be capitalized (i.e OR).">or</span>
+  else)
+</div>
+<span class="error" title="Cannot have operators back to back at position 38 &#39;AND  &#39;: ">AND</span>
+<span class="operator" title="">AND</span>that<span class="error" title="A search must not end with an operator at position 51 &#39;NOT&#39;: ">NOT</span>
+```
+
+### Here is an example with no errors
+
+![success-test.png](./readme-assets/Success-Test.png)
+
+#### Here are the success tokens
+
+![success-tokens.png](./readme-assets/Success-Tokens.png)
+
+#### Here is the HTML output
+
+```html
+this
+<span class="success" title="">AND</span>
+that
+<span class="success" title="">AND</span>
+<div class="grouping">
+  (other
+  <span class="success" title="">OR</span>
+  thing)
+</div>
+<span class="success" title="">AND</span>
+foo
+```
+
 ## Theory and How it works
 
 This library will parse a search string and create an array of tokens. We can then parse the tokens and create the innerHTML for an HTML element that can be styled to point out errors and valid operators.
